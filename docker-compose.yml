@@ -1,0 +1,6 @@
+services:
+  dev:
+    image: ghcr.io/vyse-dx/devcontainer:latest
+    user: ubuntu
+    volumes:
+      - .:/workspace

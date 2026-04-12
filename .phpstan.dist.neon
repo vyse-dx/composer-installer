@@ -1,0 +1,28 @@
+includes:
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    
+parameters:
+    level: 10
+
+    paths:
+        - src
+        - test
+
+    tmpDir: .cache/phpstan
+
+    reportUnmatchedIgnoredErrors: false
+
+    ignoreErrors:
+        -
+            identifier: property.unresolvableNativeType
+            path: test/*
+        -
+            identifier: staticMethod.unresolvableReturnType
+            path: test/*
+        -
+            identifier: method.nonObject
+            message: '#Cannot call method willReturn\(\) on mixed#'
+            path: test/*
