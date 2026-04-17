@@ -1,3 +1,4 @@
 vendor/
+vyse/
 .php-cs-fixer.php
 phpunit.xml

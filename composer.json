@@ -13,7 +13,8 @@
         "php": "^8.5"
     },
     "require-dev": {
-        "vyse/toolchain": "^1.0"
+        "vyse/toolchain": "^1.0",
+        "composer/composer": "^2.9"
     },
     "autoload": {
         "psr-4": {
@@ -21,6 +22,17 @@
         }
     },
     "extra": {
+        "branch-alias": {
+            "dev-main": "1.0.x-dev"
+        },
         "class": "Vyse\\Installer\\Plugin"
+    },
+    "config": {
+        "allow-plugins": {
+            "vyse/installer": true
+        }
+    },
+    "scripts": {
+        "vyse:install": "Vyse\\Installer\\Plugin::install"
     }
 }
