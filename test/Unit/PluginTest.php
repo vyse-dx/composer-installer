@@ -15,6 +15,7 @@ use Vyse\Installer\Data\Config;
 use Vyse\Installer\Parser\ConfigParser;
 use Vyse\Installer\Plugin;
 use Vyse\Installer\Task\BinTask;
+use Vyse\Installer\Task\CacheTask;
 use Vyse\Installer\Task\GitProxyTask;
 use Vyse\Installer\Task\HookRunnerTask;
 
@@ -29,6 +30,7 @@ class PluginTest extends TestCase
     private MockObject & BinTask $binTaskMock;
     private MockObject & HookRunnerTask $hookRunnerTaskMock;
     private MockObject & GitProxyTask $gitProxyTaskMock;
+    private MockObject & CacheTask $cacheTaskMock;
 
     private Plugin $plugin;
 
@@ -48,12 +50,14 @@ class PluginTest extends TestCase
         $this->binTaskMock = $this->createMock(BinTask::class);
         $this->hookRunnerTaskMock = $this->createMock(HookRunnerTask::class);
         $this->gitProxyTaskMock = $this->createMock(GitProxyTask::class);
+        $this->cacheTaskMock = $this->createMock(CacheTask::class);
 
         $this->plugin = new Plugin(
             $this->parserMock,
             $this->binTaskMock,
             $this->hookRunnerTaskMock,
             $this->gitProxyTaskMock,
+            $this->cacheTaskMock,
         );
     }
 
@@ -79,9 +83,11 @@ class PluginTest extends TestCase
             ->with(self::stringContains('Cannot determine vendor-dir'))
         ;
 
-        // None of the tasks should be called
         $this->parserMock->expects(self::never())->method('__invoke');
         $this->binTaskMock->expects(self::never())->method('__invoke');
+        $this->hookRunnerTaskMock->expects(self::never())->method('__invoke');
+        $this->gitProxyTaskMock->expects(self::never())->method('__invoke');
+        $this->cacheTaskMock->expects(self::never())->method('__invoke');
 
         $this->plugin->executePipeline($this->eventMock);
     }
@@ -99,6 +105,7 @@ class PluginTest extends TestCase
         $vyseConfigMock = $this->createMock(Config::class);
         $vyseConfigMock->method('hasBinDirs')->willReturn(true);
         $vyseConfigMock->method('hasHooks')->willReturn(false);
+        $vyseConfigMock->method('requiresCache')->willReturn(false);
 
         $this->parserMock->expects(self::once())
             ->method('__invoke')
@@ -113,6 +120,7 @@ class PluginTest extends TestCase
 
         $this->hookRunnerTaskMock->expects(self::never())->method('__invoke');
         $this->gitProxyTaskMock->expects(self::never())->method('__invoke');
+        $this->cacheTaskMock->expects(self::never())->method('__invoke');
 
         $this->plugin->executePipeline($this->eventMock);
     }
@@ -130,6 +138,7 @@ class PluginTest extends TestCase
         $vyseConfigMock = $this->createMock(Config::class);
         $vyseConfigMock->method('hasBinDirs')->willReturn(false);
         $vyseConfigMock->method('hasHooks')->willReturn(true);
+        $vyseConfigMock->method('requiresCache')->willReturn(false);
 
         $this->parserMock->expects(self::once())
             ->method('__invoke')
@@ -149,6 +158,41 @@ class PluginTest extends TestCase
             ->with($vyseConfigMock, $this->ioMock, $projectRoot)
         ;
 
+        $this->cacheTaskMock->expects(self::never())->method('__invoke');
+
+        $this->plugin->executePipeline($this->eventMock);
+    }
+
+    public function testItOnlyExecutesCacheTaskWhenOnlyCacheIsConfigured(): void
+    {
+        $this->composerConfigMock->expects(self::once())
+            ->method('get')
+            ->with('vendor-dir')
+            ->willReturn('/var/www/vendor')
+        ;
+
+        $projectRoot = '/var/www';
+
+        $vyseConfigMock = $this->createMock(Config::class);
+        $vyseConfigMock->method('hasBinDirs')->willReturn(false);
+        $vyseConfigMock->method('hasHooks')->willReturn(false);
+        $vyseConfigMock->method('requiresCache')->willReturn(true);
+
+        $this->parserMock->expects(self::once())
+            ->method('__invoke')
+            ->with($this->composerMock)
+            ->willReturn($vyseConfigMock)
+        ;
+
+        $this->binTaskMock->expects(self::never())->method('__invoke');
+        $this->hookRunnerTaskMock->expects(self::never())->method('__invoke');
+        $this->gitProxyTaskMock->expects(self::never())->method('__invoke');
+
+        $this->cacheTaskMock->expects(self::once())
+            ->method('__invoke')
+            ->with($vyseConfigMock, $this->ioMock, $projectRoot)
+        ;
+
         $this->plugin->executePipeline($this->eventMock);
     }
 
@@ -160,11 +204,10 @@ class PluginTest extends TestCase
             ->willReturn('/var/www/vendor')
         ;
 
-        $projectRoot = '/var/www';
-
         $vyseConfigMock = $this->createMock(Config::class);
         $vyseConfigMock->method('hasBinDirs')->willReturn(true);
         $vyseConfigMock->method('hasHooks')->willReturn(true);
+        $vyseConfigMock->method('requiresCache')->willReturn(true);
 
         $this->parserMock->expects(self::once())
             ->method('__invoke')
@@ -174,6 +217,7 @@ class PluginTest extends TestCase
         $this->binTaskMock->expects(self::once())->method('__invoke');
         $this->hookRunnerTaskMock->expects(self::once())->method('__invoke');
         $this->gitProxyTaskMock->expects(self::once())->method('__invoke');
+        $this->cacheTaskMock->expects(self::once())->method('__invoke');
 
         $this->plugin->executePipeline($this->eventMock);
     }

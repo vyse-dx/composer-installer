@@ -35,6 +35,10 @@ class ConfigParser
 
             $vyseConfig = $extra['vyse'];
 
+            if (isset($vyseConfig['cache']) && $vyseConfig['cache'] === true) {
+                $config->enableCache();
+            }
+
             if (isset($vyseConfig['bin'])) {
                 $binDirs = is_array($vyseConfig['bin']) ? $vyseConfig['bin'] : [$vyseConfig['bin']];
                 $baseDir = $this->resolvePackageDir($package, $projectRoot, $composer);

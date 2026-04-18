@@ -20,6 +20,7 @@ class ConfigTest extends TestCase
     {
         self::assertFalse($this->config->hasBinDirs());
         self::assertFalse($this->config->hasHooks());
+        self::assertFalse($this->config->requiresCache());
 
         self::assertSame([], $this->config->getBinDirs());
         self::assertSame([], $this->config->getHooks());
@@ -75,5 +76,13 @@ class ConfigTest extends TestCase
         ];
 
         self::assertSame($expectedHooks, $this->config->getHooks());
+    }
+
+    public function testItEnablesCacheFluently(): void
+    {
+        $result = $this->config->enableCache();
+
+        self::assertSame($this->config, $result);
+        self::assertTrue($this->config->requiresCache());
     }
 }

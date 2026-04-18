@@ -52,6 +52,7 @@ class ConfigParserTest extends TestCase
 
         self::assertFalse($config->hasBinDirs());
         self::assertFalse($config->hasHooks());
+        self::assertFalse($config->requiresCache());
     }
 
     public function testItParsesBinDirectoriesFromDependenciesAndRootProject(): void
@@ -129,11 +130,30 @@ class ConfigParserTest extends TestCase
         ], $config->getHooks());
     }
 
+    public function testItParsesCacheRequirement(): void
+    {
+        $depPackage = $this->createMock(PackageInterface::class);
+        $depPackage->method('getExtra')->willReturn([
+            'vyse' => ['cache' => true]
+        ]);
+
+        $rootPackage = $this->createMock(RootPackageInterface::class);
+        $rootPackage->method('getExtra')->willReturn([]);
+
+        $this->localRepoStub->method('getPackages')->willReturn([$depPackage]);
+        $this->composerStub->method('getPackage')->willReturn($rootPackage);
+
+        $config = ($this->parser)($this->composerStub);
+
+        self::assertTrue($config->requiresCache());
+    }
+
     public function testItIgnoresMalformedVyseConfigurations(): void
     {
         $badPackage = $this->createMock(PackageInterface::class);
         $badPackage->method('getExtra')->willReturn([
             'vyse' => [
+                'cache' => 'true', // invalid type
                 'bin' => ['this-should-be-a-string'],
                 'hooks' => [
                     'pre-commit' => 'this-should-be-an-array',
@@ -154,5 +174,6 @@ class ConfigParserTest extends TestCase
 
         self::assertFalse($config->hasBinDirs());
         self::assertFalse($config->hasHooks());
+        self::assertFalse($config->requiresCache());
     }
 }

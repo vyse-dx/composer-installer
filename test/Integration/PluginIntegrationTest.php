@@ -63,10 +63,11 @@ class PluginIntegrationTest extends IntegrationTestCase
             'vyse' => ['bin' => 'bin'] // Maps to /vendor/vyse/toolchain/bin
         ]);
 
-        // Fake root project supplying the hook configuration
+        // Fake root project supplying the hook configuration and cache requirement
         $rootPackage = $this->createMock(RootPackageInterface::class);
         $rootPackage->method('getExtra')->willReturn([
             'vyse' => [
+                'cache' => true,
                 'hooks' => [
                     'pre-commit' => [
                         '00-style' => './vyse/style'
@@ -127,5 +128,13 @@ class PluginIntegrationTest extends IntegrationTestCase
         assert(is_string($proxyContent));
         self::assertStringContainsString('exec "./vyse/hooks/pre-commit"', $proxyContent);
         self::assertSame('0755', substr(sprintf('%o', fileperms($proxyPath)), -4));
+
+        // D. CacheTask Success: Cache directory and gitignore created
+        $cacheDir = $this->tempRoot . '/.cache';
+        $gitIgnore = $cacheDir . '/.gitignore';
+
+        self::assertDirectoryExists($cacheDir, 'Cache directory should be created.');
+        self::assertFileExists($gitIgnore, '.gitignore should be created inside cache directory.');
+        self::assertSame("*\n!.gitignore\n", file_get_contents($gitIgnore));
     }
 }

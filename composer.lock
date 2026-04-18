@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ee59803f8e8edcc1f15304ef2a198fb4",
+    "content-hash": "f790da5526bef37056bd4a9b83ebb44e",
     "packages": [],
     "packages-dev": [
         {
@@ -1360,11 +1360,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.49",
+            "version": "2.1.50",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d0082955396e7f5ba19cf298224b85e1099f0ed8",
-                "reference": "d0082955396e7f5ba19cf298224b85e1099f0ed8",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d452086fb4cf648c6b2d8cf3b639351f79e4f3e2",
+                "reference": "d452086fb4cf648c6b2d8cf3b639351f79e4f3e2",
                 "shasum": ""
             },
             "require": {
@@ -1409,7 +1409,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-16T21:10:58+00:00"
+            "time": "2026-04-17T13:10:32+00:00"
         },
         {
             "name": "phpstan/phpstan-deprecation-rules",
@@ -1952,16 +1952,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "13.1.5",
+            "version": "13.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "89adcba73441b38db31d5c0473b61e2907311db0"
+                "reference": "c3c414ea438e5a37d00697eaea43e6e05e201a42"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/89adcba73441b38db31d5c0473b61e2907311db0",
-                "reference": "89adcba73441b38db31d5c0473b61e2907311db0",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c3c414ea438e5a37d00697eaea43e6e05e201a42",
+                "reference": "c3c414ea438e5a37d00697eaea43e6e05e201a42",
                 "shasum": ""
             },
             "require": {
@@ -2031,7 +2031,7 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
                 "security": "https://github.com/sebastianbergmann/phpunit/security/policy",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.1.5"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/13.1.6"
             },
             "funding": [
                 {
@@ -2039,7 +2039,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-04-16T04:58:40+00:00"
+            "time": "2026-04-17T12:52:50+00:00"
         },
         {
             "name": "psr/container",
@@ -5589,16 +5589,16 @@
         },
         {
             "name": "vyse/toolchain",
-            "version": "v1.0.3",
+            "version": "v1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/vyse-dx/php-toolchain.git",
-                "reference": "686cbcb0144567c943fa40163f47bac3b16ba405"
+                "reference": "8b7a49402eb65ec98c44762551db57d941603d82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/vyse-dx/php-toolchain/zipball/686cbcb0144567c943fa40163f47bac3b16ba405",
-                "reference": "686cbcb0144567c943fa40163f47bac3b16ba405",
+                "url": "https://api.github.com/repos/vyse-dx/php-toolchain/zipball/8b7a49402eb65ec98c44762551db57d941603d82",
+                "reference": "8b7a49402eb65ec98c44762551db57d941603d82",
                 "shasum": ""
             },
             "require": {
@@ -5617,7 +5617,23 @@
             },
             "type": "library",
             "extra": {
-                "vyse-bin": "vyse-bin"
+                "vyse": {
+                    "bin": [
+                        "vyse-bin"
+                    ],
+                    "hooks": {
+                        "pre-push": {
+                            "002-test": "vyse/test/all",
+                            "000-style": "vyse/style/check",
+                            "001-static-analysis": "vyse/analyse"
+                        },
+                        "pre-commit": {
+                            "002-test": "vyse/test/unit",
+                            "000-style": "vyse/style/check",
+                            "001-static-analysis": "vyse/analyse"
+                        }
+                    }
+                }
             },
             "autoload": {
                 "psr-4": {
@@ -5636,9 +5652,9 @@
             "description": "Highly opinionated PHP tooling for Vyse projects.",
             "support": {
                 "issues": "https://github.com/vyse-dx/php-toolchain/issues",
-                "source": "https://github.com/vyse-dx/php-toolchain/tree/v1.0.3"
+                "source": "https://github.com/vyse-dx/php-toolchain/tree/v1.0.4"
             },
-            "time": "2026-04-15T13:31:25+00:00"
+            "time": "2026-04-17T12:53:54+00:00"
         }
     ],
     "aliases": [],

@@ -12,6 +12,7 @@ use Composer\Script\Event;
 use Composer\Script\ScriptEvents;
 use Vyse\Installer\Parser\ConfigParser;
 use Vyse\Installer\Task\BinTask;
+use Vyse\Installer\Task\CacheTask;
 use Vyse\Installer\Task\GitProxyTask;
 use Vyse\Installer\Task\HookRunnerTask;
 
@@ -22,6 +23,7 @@ final readonly class Plugin implements PluginInterface, EventSubscriberInterface
         private BinTask $binTask = new BinTask,
         private HookRunnerTask $hookRunnerTask = new HookRunnerTask,
         private GitProxyTask $gitProxyTask = new GitProxyTask,
+        private CacheTask $cacheTask = new CacheTask,
     ) {
     }
 
@@ -82,6 +84,10 @@ final readonly class Plugin implements PluginInterface, EventSubscriberInterface
         if ($config->hasHooks()) {
             ($this->hookRunnerTask)($config, $io, $projectRoot);
             ($this->gitProxyTask)($config, $io, $projectRoot);
+        }
+
+        if ($config->requiresCache()) {
+            ($this->cacheTask)($config, $io, $projectRoot);
         }
     }
 }

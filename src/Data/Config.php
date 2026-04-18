@@ -12,6 +12,8 @@ class Config
     /** @var array<string, array<string, string>> */
     private array $hooks = [];
 
+    private bool $requiresCache = false;
+
     public function addBinDir(
         string $dir,
     ): self {
@@ -30,6 +32,13 @@ class Config
         }
 
         $this->hooks[$event][$name] = $script;
+
+        return $this;
+    }
+
+    public function enableCache(): self
+    {
+        $this->requiresCache = true;
 
         return $this;
     }
@@ -58,5 +67,10 @@ class Config
     public function hasHooks(): bool
     {
         return $this->hooks !== [];
+    }
+
+    public function requiresCache(): bool
+    {
+        return $this->requiresCache;
     }
 }
